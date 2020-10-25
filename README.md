@@ -1,7 +1,7 @@
 # bash
 Bash (Unix shell)
 ## format.sh
-Task: Display a list of all the URLs that returned the error code of 50x and total number of this errors.
+Display a list of all the URLs that returned the error code of 50x and total number of this errors.
 ```php
 Input data:
 05:17:11 GET /index.html 200
