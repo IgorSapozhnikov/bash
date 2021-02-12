@@ -19,6 +19,6 @@ Output data:
 ```
 ------------------------------------------------------------
 ## BashA.md
-List of command with description. 
+List of some commands for audit with short description. 
 
 ------------------------------------------------------------
