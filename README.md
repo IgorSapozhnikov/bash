@@ -19,7 +19,7 @@ Output data:
 ```
 ------------------------------------------------------------
 ## pdftoimg.sh (-cut or -pdftojpg)
-1. Increase size and create crops of all input images for start directory (in the equal-specified proportions) and next save images a into separate jpg files (in separate directory).
+1. Increase size and create crops of all input images for start directory (in the equal-specified proportions) and next save images a into unique jpg files (in separate directory).
 2. Convert pages of pdf file to unique jpg files.
 ------------------------------------------------------------
 ## BashA.md
