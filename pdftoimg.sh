@@ -11,8 +11,9 @@ readonly parameter1=$1
 #echo "For correct work this script needs:"
 #echo "Image Magick pack (sudo apt-get install imagemagick)"
 #echo "Edit POLYCY (sudo nano /etc/ImageMagick-6/policy.xml)"
-#echo 'Add the next line: '
-#echo '<policy domain="module" rights="read|write" pattern="{PS,PDF,XPS}" />"'
+#echo 'Add the next lines: '
+#echo '<policy domain="module" rights="read|write" pattern="{PS,PDF,XPS}" />'
+#echo '<policy domain="coder" rights="read|write" pattern="{GIF,JPEG,PNG,WEBP}" />'
 #echo 'Comment the next lines: 
 #<!--
 #  <policy domain="coder" rights="none" pattern="PS" />
@@ -47,7 +48,6 @@ case $parameter1 in
 	countfiles=`find ./ -maxdepth 1 -name '*.pdf' -type f|wc -l`;
 	echo "Found $countfiles files (in this directory):"
 	echo $files_e
-#	echo "${files_e[1]}"
 	i=1
 	for file_l in "${files[@]}";
 	do
@@ -73,6 +73,8 @@ case $parameter1 in
 	START_TOTAL_TIME=$(date +%s)
 	rm -rf out_images
 	mkdir -p out_images
+	rm -rf in_images
+	mkdir -p in_images
 	files=`find ./ -maxdepth 1 -name '*.jpg' -type f`;
 	countfiles=`find ./ -maxdepth 1 -name '*.jpg' -type f|wc -l`;
 	echo "Found $countfiles files (in this directory):";
@@ -83,8 +85,46 @@ case $parameter1 in
 	START_TIME=$(date +%s)
 	echo -n "[$i/$countfiles] Runing for "$file;
 	filename="${file##*/}"
-	make_filename="out_images/$filename-%02d.jpg"
-	convert -sample 1000% -crop 1x3@ -scene 1 $file $make_filename;
+	make_filename_in="in_images/$filename"
+	make_filename_out="out_images/$filename-%02d.jpg"
+	cp $file $make_filename_in
+#	if next operator return "warning" or "error" then original file wil not delete
+	compare_result=$(convert -sample 1000% -crop 1x2@ -scene 1 $file $make_filename_out && rm -f $file 2>&1)
+	#	if [ $? -eq 0 ]; then rm -f $file; fi
+	[ -z "$compare_result"] && rm -f $file
+	END_TIME=$(date +%s)
+	DIFF=$(($END_TIME - $START_TIME))
+	echo "-->[OK-$DIFF sec.] "
+	i=$((i=i+1))
+	done
+	END_TOTAL_TIME=$(date +%s)
+	DIFF_TOTAL=$(($END_TOTAL_TIME - $START_TOTAL_TIME))
+	echo "[TOTAL TIME: $DIFF_TOTAL sec.] "
+;;
+
+-cutf)
+	START_TOTAL_TIME=$(date +%s)
+	rm -rf in_images_not_frame
+	mkdir -p in_images_not_frame
+	rm -rf out_images_not_frame
+	mkdir -p out_images_not_frame
+	files=`find ./ -maxdepth 1 -name '*.jpg' -type f`;
+	countfiles=`find ./ -maxdepth 1 -name '*.jpg' -type f|wc -l`;
+	echo "Found $countfiles files (in this directory):";
+	echo $files
+	i=1
+	for file in $files
+	do
+	START_TIME=$(date +%s)
+	echo -n "[$i/$countfiles] Runing for "$file;
+	filename="${file##*/}"
+	make_filename_in="in_images_not_frame/$filename"
+	make_filename_out="out_images_not_frame/$filename-%02d.jpg"
+	cp $file $make_filename_in
+#	if next operator return "warning" or "error" then original file wil not delete (for this files need reduce fuzz)
+	compare_result=$(convert -fuzz 65% -trim -border 5 -bordercolor black +repage $file $make_filename_out 2>&1)
+#	if [ $? -eq 0 ]; then rm -f $file; fi
+	[ -z "$compare_result"] && rm -f $file
 	END_TIME=$(date +%s)
 	DIFF=$(($END_TIME - $START_TIME))
 	echo "-->[OK-$DIFF sec.] "
@@ -99,6 +139,7 @@ case $parameter1 in
 	echo "Parametr not found!"
 	echo "Please use:"
 	echo "-pdftojpg for convert PDF to JPG"
+	echo "-cutf for cut frame on JPG and save into equal parts"
 	echo "-cut for cut JPG into equal parts"
 ;;
 esac
