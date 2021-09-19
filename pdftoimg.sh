@@ -90,7 +90,7 @@ case $parameter1 in
 	cp $file $make_filename_in
 #	if next operator return "warning" or "error" then original file wil not delete
 	compare_result=$(convert -sample 1000% -crop 1x2@ -scene 1 $file $make_filename_out && rm -f $file 2>&1)
-	#	if [ $? -eq 0 ]; then rm -f $file; fi
+#	if [ $? -eq 0 ]; then rm -f $file; fi
 	[ -z "$compare_result"] && rm -f $file
 	END_TIME=$(date +%s)
 	DIFF=$(($END_TIME - $START_TIME))
