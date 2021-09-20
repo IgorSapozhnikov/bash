@@ -89,7 +89,7 @@ case $parameter1 in
 	make_filename_out="out_images/$filename-%02d.jpg"
 	cp $file $make_filename_in
 #	if next operator return "warning" or "error" then original file wil not delete
-	compare_result=$(convert -sample 1000% -crop 1x2@ -scene 1 $file $make_filename_out && rm -f $file 2>&1)
+	compare_result=$(convert -sample 1000% -crop 3x2@ -scene 1 $file $make_filename_out && rm -f $file 2>&1)
 #	if [ $? -eq 0 ]; then rm -f $file; fi
 	[ -z "$compare_result"] && rm -f $file
 	END_TIME=$(date +%s)
@@ -124,6 +124,38 @@ case $parameter1 in
 #	if next operator return "warning" or "error" then original file wil not delete (for this files need reduce fuzz)
 	compare_result=$(convert -fuzz 65% -trim -border 5 -bordercolor black +repage $file $make_filename_out 2>&1)
 #	if [ $? -eq 0 ]; then rm -f $file; fi
+	[ -z "$compare_result"] && rm -f $file
+	END_TIME=$(date +%s)
+	DIFF=$(($END_TIME - $START_TIME))
+	echo "-->[OK-$DIFF sec.] "
+	i=$((i=i+1))
+	done
+	END_TOTAL_TIME=$(date +%s)
+	DIFF_TOTAL=$(($END_TOTAL_TIME - $START_TOTAL_TIME))
+	echo "[TOTAL TIME: $DIFF_TOTAL sec.] "
+;;
+
+-fix)
+	START_TOTAL_TIME=$(date +%s)
+	rm -rf out_images_fix
+	mkdir -p out_images_fix
+	rm -rf in_images_fix
+	mkdir -p in_images_fix
+	files=`find ./ -maxdepth 1 -name '*.jpg' -type f`;
+	countfiles=`find ./ -maxdepth 1 -name '*.jpg' -type f|wc -l`;
+	echo "Found $countfiles files (in this directory):";
+	echo $files
+	i=1
+	for file in $files
+	do
+	START_TIME=$(date +%s)
+	echo -n "[$i/$countfiles] Runing for "$file;
+	filename="${file##*/}"
+	make_filename_in="in_images_fix/$filename"
+	make_filename_out="out_images_fix/$filename-%02d.jpg"
+	cp $file $make_filename_in
+#	if next operator return "warning" or "error" then original file wil not delete
+	compare_result=$(convert -sharpen 0.9 -sharpen 1.2 -sharpen 0.8 -sharpen 0.2 -normalize -despeckle -sharpen 0.9 -sharpen 0.9 -sharpen 0.9 -median 0.45 -noise 0.2 -sharpen 0.9 -noise 0.2 -sharpen 0.9 -median 0.45 -sharpen 0.1 -sharpen 0.4 -noise 0.2 -normalize -median 0.2 $file $make_filename_out && rm -f $file 2>&1)
 	[ -z "$compare_result"] && rm -f $file
 	END_TIME=$(date +%s)
 	DIFF=$(($END_TIME - $START_TIME))
