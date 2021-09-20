@@ -173,6 +173,7 @@ case $parameter1 in
 	echo "-pdftojpg for convert PDF to JPG"
 	echo "-cutf for cut frame on JPG and save into equal parts"
 	echo "-cut for cut JPG into equal parts"
+	echo "-fix for improving image quality"
 ;;
 esac
 
