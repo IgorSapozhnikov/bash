@@ -19,7 +19,7 @@ Output data:
 ```
 ------------------------------------------------------------
 ## pdftoimg.sh (-cut or -cutf or -fix -pdftojpg)
-You can batch process all package of jpg images at once:
+You can batch process all jpg images at once:
 1. Increase size and create crops of all input images for start directory (in the equal-specified proportions) and next save images into unique jpg files (in separate directory).
 2. Do auto-crop (trimming empty zones of image) of all input images for start directory.
 3. Improve image quality.
